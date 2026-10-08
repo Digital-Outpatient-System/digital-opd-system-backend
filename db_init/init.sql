@@ -5,7 +5,7 @@ CREATE TABLE role (
 );
 
 --- USER TABLE for staff
-CREATE TABLE user (
+CREATE TABLE "user" (
     user_id SERIAL PRIMARY KEY,
     role_id INT NOT NULL REFERENCES role(role_id),
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE user (
 --- CREATE AUDIT LOGS
 CREATE TABLE audit_log (
     audit_id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL REFERENCES user(user_id),
+    user_id INT NOT NULL REFERENCES "user"(user_id),
     action VARCHAR(100) NOT NULL,
     entity_name VARCHAR(50) NOT NULL,
     entity_id INT NOT NULL,
@@ -47,7 +47,7 @@ CREATE INDEX idx_patient_phin ON patient(phin);
 CREATE TABLE queue_token (
     token_id SERIAL PRIMARY KEY,
     patient_id INT NOT NULL REFERENCES patient(patient_id) ON DELETE CASCADE,
-    doctor_id INT REFERENCES user(user_id),
+    doctor_id INT REFERENCES "user"(user_id),
     token_number VARCHAR(20) NOT NULL,
     token_date DATE NOT NULL DEFAULT CURRENT_DATE,
     status VARCHAR(20) DEFAULT 'WAITING',  -- 'WAITING', 'CALLED', 'COMPLETED'
@@ -72,12 +72,12 @@ CREATE TABLE triage(
 ---CONSULTATION TABLE
 CREATE TABLE consultation (
     consultation_id SERIAL PRIMARY KEY,
-    patient_id INT REFERENCES patient(patient_id) ON DELETE CASCADE,
-    doctor_id INT REFERENCES user(user_id),
+    patient_id INT NOT NULL REFERENCES patient(patient_id) ON DELETE CASCADE,
+    doctor_id INT NOT NULL REFERENCES "user"(user_id),
     token_id INT REFERENCES queue_token(token_id),
     symptoms TEXT,
     diagnosis TEXT NOT NULL,
-    clinical_note TEXT,
+    clinical_notes TEXT,
     consultation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -95,8 +95,8 @@ CREATE TABLE prescription (
     prescription_id SERIAL PRIMARY KEY,
     consultation_id INT NOT NULL REFERENCES consultation(consultation_id) ON DELETE CASCADE,
     patient_id INT NOT NULL REFERENCES patient(patient_id),
-    doctor_id INT NOT NULL REFERENCES user(user_id),
-    status VARCHAR(20) DEFAULT 'PENDING' -- 'PENDING', 'DISPENSED', 'CANCELLED'
+    doctor_id INT NOT NULL REFERENCES "user"(user_id),
+    status VARCHAR(20) DEFAULT 'PENDING', -- 'PENDING', 'DISPENSED', 'CANCELLED'
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -115,7 +115,7 @@ CREATE TABLE prescription_item (
 CREATE TABLE dispensing (
     dispensing_id SERIAL PRIMARY KEY,
     prescription_id INT NOT NULL REFERENCES prescription(prescription_id),
-    pharmacist_id INT NOT NULL REFERENCES user(user_id),
+    pharmacist_id INT NOT NULL REFERENCES "user"(user_id),
     dispensed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR(20) DEFAULT 'COMPLETED'
 );
@@ -132,7 +132,7 @@ CREATE TABLE vaccination (
     vaccination_id SERIAL PRIMARY KEY,
     patient_id INT NOT NULL REFERENCES patient(patient_id) ON DELETE CASCADE,
     vaccine_id INT NOT NULL REFERENCES vaccine(vaccine_id),
-    administered_by INT NOT NULL REFERENCES user(user_id),
+    administered_by INT NOT NULL REFERENCES "user"(user_id),
     dose_number INT NOT NULL,
     administered_date DATE NOT NULL DEFAULT CURRENT_DATE,
     next_dose_date DATE
