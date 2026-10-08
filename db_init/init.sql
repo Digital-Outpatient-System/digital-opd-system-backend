@@ -14,3 +14,14 @@ CREATE TABLE user (
     status VARCHAR(20) DEFAULT 'ACTIVE'
 );
 
+--- CREATE AUDIT LOGS
+CREATE TABLE audit_log (
+    audit_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES user(user_id),
+    action VARCHAR(100) NOT NULL,
+    entity_name VARCHAR(50) NOT NULL,
+    entity_id INT NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
