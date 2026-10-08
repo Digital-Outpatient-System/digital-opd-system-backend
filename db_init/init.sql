@@ -39,7 +39,9 @@ CREATE TABLE patient (
 );
 
 ---
----
+---ADD INDEX TO PATIENT TABLE FOR FAST SEARCH
+CREATE INDEX idx_patient_nic ON patient(nic);
+CREATE INDEX idx_patient_phin ON patient(phin);
 
 ---QUEUE_TOKEN
 CREATE TABLE queue_token (
