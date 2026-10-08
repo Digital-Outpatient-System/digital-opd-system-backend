@@ -24,4 +24,16 @@ CREATE TABLE audit_log (
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
+--- PATIENT TABLE
+CREATE TABLE patient (
+    patient_id SERIAL PRIMARY KEY,
+    nic VARCHAR(20) UNIQUE,
+    phin VARCHAR(30) UNIQUE, ---personal health identify number
+    full_name VARCHAR(100) NOT NULL,
+    date_of_birth DATE NOT NULL,
+    gender VARCHAR(25) NOT NULL,
+    address TEXT,
+    phone VARCHAR(50),
+    allergies TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
