@@ -53,3 +53,39 @@ CREATE TABLE queue_token (
     called_at TIMESTAMP,
     completed_at TIMESTAMP
 );
+
+---TRIAGE TABLE
+CREATE TABLE triage(
+    triage_id SERIAL PRIMARY KEY,
+    patient_id INT NOT NULL REFERENCES patient(patient_id) ON DELETE CASCADE,
+    token_id INT NOT NULL REFERENCES queue_token(token_id) ON DELETE CASCADE,
+    recorded_by INT NOT NULL REFERENCES "user"(user_id),
+    temperature DECIMAL(4,1),
+    blood_pressure VARCHAR(20),
+    pulse_rate INT,
+    symptoms TEXT,
+    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+---CONSULTATION TABLE
+CREATE TABLE consultation (
+    consultation_id SERIAL PRIMARY KEY,
+    patient_id INT REFERENCES patient(patient_id) ON DELETE CASCADE,
+    doctor_id INT REFERENCES user(user_id),
+    token_id INT REFERENCES queue_token(token_id),
+    symptoms TEXT,
+    diagnosis TEXT NOT NULL,
+    clinical_note TEXT,
+    consultation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+---CREATE TABLE (Pharmacy inventory)
+CREATE TABLE medication (
+    medication_id SERIAL PRIMARY KEY,
+    medication_name VARCHAR(100) NOT NULL,
+    strength VARCHAR(50), --- '50mg'
+    form VARCHAR(50),   --- 'Tablet', 'Syrup', 'Injection'
+    stock_quantity INT NOT NULL DEFAULT 0
+);
+
+--- PRESCRIPTION TABLE
