@@ -89,3 +89,56 @@ CREATE TABLE medication (
 );
 
 --- PRESCRIPTION TABLE
+CREATE TABLE prescription (
+    prescription_id SERIAL PRIMARY KEY,
+    consultation_id INT NOT NULL REFERENCES consultation(consultation_id) ON DELETE CASCADE,
+    patient_id INT NOT NULL REFERENCES patient(patient_id),
+    doctor_id INT NOT NULL REFERENCES user(user_id),
+    status VARCHAR(20) DEFAULT 'PENDING' -- 'PENDING', 'DISPENSED', 'CANCELLED'
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+--- PRESCRIPTION ITEM TABLE
+CREATE TABLE prescription_item (
+    prescription_item_id SERIAL PRIMARY KEY,
+    prescription_id INT NOT NULL REFERENCES prescription(prescription_id) ON DELETE CASCADE,
+    medication_id INT NOT NULL REFERENCES medication(medication_id),
+    dosage VARCHAR(50) NOT NULL,     -- e.g., '1 Tablet'
+    frequency VARCHAR(50) NOT NULL,  -- e.g., 'TDS (3 times a day)'
+    duration_days INT NOT NULL,  
+    quantity INT NOT NULL
+);
+
+--- DISPENSING TABLE
+CREATE TABLE dispensing (
+    dispensing_id SERIAL PRIMARY KEY,
+    prescription_id INT NOT NULL REFERENCES prescription(prescription_id),
+    pharmacist_id INT NOT NULL REFERENCES user(user_id),
+    dispensed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(20) DEFAULT 'COMPLETED'
+);
+
+--- VACCINE TABLE
+CREATE TABLE vaccine (
+    vaccine_id SERIAL PRIMARY KEY,
+    vaccine_name VARCHAR(100) NOT NULL,
+    regimen TEXT NOT NULL                -- e.g., 'Day 0, Day 3, Day 7, Day 14, Day 28'
+);
+
+---VACCINATION TABLE (Patient Immunization History)
+CREATE TABLE vaccination (
+    vaccination_id SERIAL PRIMARY KEY,
+    patient_id INT NOT NULL REFERENCES patient(patient_id) ON DELETE CASCADE,
+    vaccine_id INT NOT NULL REFERENCES vaccine(vaccine_id),
+    administered_by INT NOT NULL REFERENCES user(user_id),
+    dose_number INT NOT NULL,
+    administered_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    next_dose_date DATE
+);
+
+--- INSERT INITIAL ROLS TO ROLE
+INSERT INTO role(role_name) VALUES
+('Receptionist'),
+('Medical Officer'),
+('Pharmacist'),
+('DMO_Administrator');
