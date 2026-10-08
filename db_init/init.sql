@@ -37,3 +37,19 @@ CREATE TABLE patient (
     allergies TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+---
+---
+
+---QUEUE_TOKEN
+CREATE TABLE queue_token (
+    token_id SERIAL PRIMARY KEY,
+    patient_id INT NOT NULL REFERENCES patient(patient_id) ON DELETE CASCADE,
+    doctor_id INT REFERENCES user(user_id),
+    token_number VARCHAR(20) NOT NULL,
+    token_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    status VARCHAR(20) DEFAULT 'WAITING',  -- 'WAITING', 'CALLED', 'COMPLETED'
+    issued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    called_at TIMESTAMP,
+    completed_at TIMESTAMP
+);
