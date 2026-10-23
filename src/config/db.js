@@ -1,3 +1,4 @@
+// Database connection configuration file and supabase and postgresql pool setup
 require('dotenv').config();
 const {Pool, Query} = require('pg');
 
